@@ -5,9 +5,13 @@
 # Description: This is the main file for Project 2: Building an Assembly Language Interpreter
 #############################################################################################
 
+require_relative "instructions.rb"
+
 print "Please provide the file name for the file you'd like to work with: "
 input = gets[0...-1]
-salText = File.open("#{input}").read #contains all the lines in the given file
+memoryArray = Array.new(256)
+registerA = registerB = pc = zeroResultBit = overflowBit, mc = 0
+File.readlines("#{input}").each_with_index { |line, i| memoryArray[i] = parseInstruction(line, memoryArray, mc); i += 1 until (i >= 127) }
 
 until false
   puts "s - Execute a single line of code, starting from the instruction at memory address 0; update the PC, the
@@ -20,18 +24,20 @@ until false
   print "Please input your command: "
   cmd = gets[0...-1]
 
-  # DEBUGGING: prints given command
-  puts "Your command was #{cmd}"
-
   case cmd
   when "s"
     # TODO: Implement command s
-    puts "command s not yet implemented..."
+    puts "running command at line "
   when "a"
     # TODO: Implement command a
     puts "command a not yet implemented..."
   when "q"
     break
+  when "p"
+    # DEBUGGING: confirms the array is filled with instructions
+    memoryArray.each_with_index { |val, i| puts "#{i}. #{val}" }
+  else
+    puts "Invalid command! Please try again."
   end
 end
 
