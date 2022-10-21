@@ -9,7 +9,7 @@ class SalInstruction
   end
 end
 
-# DONE: DEC
+# DONE: DEC - Declares a symbolic variable & stores in memory
 class DEC < SalInstruction
   attr_accessor :symbol
 
@@ -22,35 +22,43 @@ class DEC < SalInstruction
   end
 
   def execute
-    @memoryArray[@memoryArray.mc] = { @symbol => 42 }
+    @memoryArray[@memoryArray.mc] = nil
     @memoryArray.symbolAddresses[@symbol] = @memoryArray.mc
   end
 end
 
-# DONE: LDX - LDA and LDB are identical so we can use most of the same class for them
+# DONE: LDX - LDA and LDB take given symbol value and store it in the register
 class LDX < SalInstruction
-  attr_accessor :symbol, :register
-
   def initialize(reg, givenSymbol, mem)
     @opCode = "LD#{reg}"
     @argType = "STRING"
-    @symbol = givenSymbol
     @arg = givenSymbol
     @memoryArray = mem
   end
 
   def execute
-    case @opCode
-    when "LDA"
-      @memoryArray.registerA = @memoryArray[@memoryArray.symbolAddresses[@arg]][@arg]
-    when "LDB"
-      @memoryArray.registerB = @memoryArray[@memoryArray.symbolAddresses[@arg]][@arg]
+    if @opCode == "LDA"
+      @memoryArray.registerA = @memoryArray[@memoryArray.symbolAddresses[@arg]]
+    else
+      @memoryArray.registerB = @memoryArray[@memoryArray.symbolAddresses[@arg]]
     end
   end
 end
 
-# TODO: LDB
-# TODO: LDI
+# DONE: LDI - Loads the integer value into the accumulator register. The value could be negative
+class LDI < SalInstruction
+  def initialize(val, mem)
+    @opCode = "LDI"
+    @argType = "NUMBER"
+    @memoryArray = mem
+    @arg = val
+  end
+
+  def execute
+    @memoryArray.registerA = @arg
+  end
+end
+
 # TODO: STR
 # TODO: XCH
 # TODO: JMP
@@ -73,6 +81,8 @@ def parseInstruction(line, memory)
     return LDX.new("A", arg, memory)
   when "LDB"
     return LDX.new("B", arg, memory)
+  when "LDI"
+    return LDI.new(arg, memory)
   else
     return "Unknown instruction..."
   end
