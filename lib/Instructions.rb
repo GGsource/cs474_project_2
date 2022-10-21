@@ -5,7 +5,7 @@ class SalInstruction
   end
 
   def to_s
-    "#{opCode} with #{argType} argument #{"of #@arg" unless @arg.nil?}"
+    "#{opCode} #{"with #{argType} argument of #@arg" unless @arg.nil?}"
   end
 end
 
@@ -73,7 +73,21 @@ class STR < SalInstruction
   end
 end
 
-# TODO: XCH
+# DONE: XCH - Exchanges the content registers A and B.
+class XCH < SalInstruction
+  def initialize(mem)
+    @opCode = "XCH"
+    @argType = "NONE"
+    @memoryArray = mem
+  end
+
+  def execute
+    temp = @memoryArray.registerA
+    @memoryArray.registerA = @memoryArray.registerB
+    @memoryArray.registerB = temp
+  end
+end
+
 # TODO: JMP
 # TODO: JZS
 # TODO: JVS
@@ -98,6 +112,8 @@ def parseInstruction(line, memory)
     return LDI.new(arg, memory)
   when "STR"
     return STR.new(arg, memory)
+  when "XCH"
+    return XCH.new(memory)
   else
     return "Unknown instruction..."
   end
