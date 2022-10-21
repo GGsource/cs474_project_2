@@ -59,7 +59,7 @@ class LDI < SalInstruction
   end
 end
 
-# TODO: STR - Stores content of accumulator into data memory at address of symbol.
+# DONE: STR - Stores content of accumulator into data memory at address of symbol.
 class STR < SalInstruction
   def initialize(givenSymbol, mem)
     @opCode = "STR"
@@ -85,9 +85,7 @@ end
 def parseInstruction(line, memory)
   input = line.split(" ", 2)
   instruction, arg = input[0], input[1]
-  unless arg.nil?
-    arg = arg.rstrip
-  end
+  arg = arg.rstrip unless arg.nil?
 
   case instruction
   when "DEC"
