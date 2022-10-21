@@ -25,12 +25,11 @@ until false
     be executed. The program's source code and data used by the program are printed."
   puts "q - Quit the command loop."
   print "Please input your command: "
-  cmd = gets[0...-1]
+  cmd = gets.rstrip
 
   case cmd
   when "s"
     # TODO: Implement command s
-    puts "running command at line #{memory.pc}:"
     memory.executeSingle
   when "a"
     # TODO: Implement command a

@@ -28,7 +28,7 @@ class Memory
       if i == 128
         returnString += "┌---------<####Memory####>----------\n"
       end
-      if i > 128 && contents != nil
+      if i > 127 && contents != nil
         isMemoryEmpty = false
       end
       if i != pc
