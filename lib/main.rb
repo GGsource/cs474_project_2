@@ -6,14 +6,16 @@
 #############################################################################################
 
 require_relative "instructions.rb"
+require_relative "Memory.rb"
 
 print "Please provide the file name for the file you'd like to work with: "
 input = gets[0...-1]
-memoryArray = Array.new(256)
-registerA = registerB = pc = zeroResultBit = overflowBit, mc = 0
-File.readlines("#{input}").each_with_index { |line, i| memoryArray[i] = parseInstruction(line, memoryArray, mc); i += 1 until (i >= 127) }
+memory = Memory.new
+
+File.readlines("#{input}").each_with_index { |line, i| memory[i] = parseInstruction(line, memory); i += 1 until (i >= 127) }
 
 until false
+  puts memory
   puts "s - Execute a single line of code, starting from the instruction at memory address 0; update the PC, the
     registers and memory according to the instruction; and print the value of the registers, the zero bit, the
     overflow bit, and only the memory locations that store source code or program data after the line is
@@ -27,15 +29,13 @@ until false
   case cmd
   when "s"
     # TODO: Implement command s
-    puts "running command at line "
+    puts "running command at line #{memory.pc}:"
+    memory.executeSingle
   when "a"
     # TODO: Implement command a
     puts "command a not yet implemented..."
   when "q"
     break
-  when "p"
-    # DEBUGGING: confirms the array is filled with instructions
-    memoryArray.each_with_index { |val, i| puts "#{i}. #{val}" }
   else
     puts "Invalid command! Please try again."
   end
