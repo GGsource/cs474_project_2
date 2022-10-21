@@ -59,7 +59,20 @@ class LDI < SalInstruction
   end
 end
 
-# TODO: STR
+# TODO: STR - Stores content of accumulator into data memory at address of symbol.
+class STR < SalInstruction
+  def initialize(givenSymbol, mem)
+    @opCode = "STR"
+    @argType = "STRING"
+    @arg = givenSymbol
+    @memoryArray = mem
+  end
+
+  def execute
+    @memoryArray[@memoryArray.symbolAddresses[@arg]] = @memoryArray.registerA
+  end
+end
+
 # TODO: XCH
 # TODO: JMP
 # TODO: JZS
@@ -67,6 +80,8 @@ end
 # TODO: ADD
 # TODO: HLT
 
+# parseInstruction -
+# Function that reads in a line and parses it as an instruction
 def parseInstruction(line, memory)
   input = line.split(" ", 2)
   instruction, arg = input[0], input[1]
@@ -83,6 +98,8 @@ def parseInstruction(line, memory)
     return LDX.new("B", arg, memory)
   when "LDI"
     return LDI.new(arg, memory)
+  when "STR"
+    return STR.new(arg, memory)
   else
     return "Unknown instruction..."
   end

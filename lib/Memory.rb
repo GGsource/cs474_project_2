@@ -19,14 +19,16 @@ class Memory
   def executeSingle
     @internalArray[@pc].execute
     @mc += 1; @pc += 1
+    # FIXME: Make sourcecode check stop at 127
+    # FIXME: Make memory check stop at 255
   end
 
   def to_s
     isMemoryEmpty = true
-    returnString = "┌---------<####Instructions####>----------\n"
+    returnString = "┌--------------<Instructions>--------------\n"
     @internalArray.each_with_index do |contents, i|
       if i == 128
-        returnString += "┌---------<####Memory####>----------\n"
+        returnString += "┌--------------<Memory>--------------\n"
       end
       if i > 127 && contents != nil
         isMemoryEmpty = false
@@ -40,11 +42,9 @@ class Memory
     if isMemoryEmpty
       returnString += "└   Memory is currently empty.\n"
     end
-    returnString += "" "
-    registerA =     #{@registerA}
-    registerB =     #{@registerB}
-    zeroResultBit = #{@zeroResultBit} 
-    overflowBit =   #{@overflowBit}
+    returnString += "" "┌--------------<Regs&Bits>--------------
+├   registerA =     #{@registerA} ├   zeroResultBit = #{@zeroResultBit}
+└   registerB =     #{@registerB} ├   overflowBit =   #{@overflowBit}
     " ""
     returnString += "\n"
   end
