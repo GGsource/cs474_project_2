@@ -51,7 +51,7 @@ class LDI < SalInstruction
     @opCode = "LDI"
     @argType = "NUMBER"
     @memoryArray = mem
-    @arg = val
+    @arg = val.to_i
   end
 
   def execute
@@ -88,23 +88,37 @@ class XCH < SalInstruction
   end
 end
 
-# TODO: JMP - Transfers control to instruction at address number in program memory.
+# DONE: JMP - Transfers control to instruction at address number in program memory.
 class JMP < SalInstruction
   def initialize(address, mem)
     @opCode = "JMP"
     @argType = "NUMBER"
     @memoryArray = mem
-    @arg = address
+    @arg = address.to_i
   end
 
-  def execute
-    @memoryArray.pc = @arg #Sets program counter to the given address
+  def execute #TESTME: Check if this does as its supposed to
+    @memoryArray.pc = @arg - 1 #Sets program counter to the given address. - 1 b/c pc is about to increment
   end
 end
 
 # TODO: JZS - Transfers control to instruction at address number if the zero-result bit is set.
 # TODO: JVS - Transfers control to instruction at address number if the overflow bit is set.
-# TODO: ADD - Adds registers A and B. Sum is stored in A. The overflow and zero-result bits are set or cleared
+# DONE: ADD - Adds registers A and B. Sum is stored in A. The overflow and zero-result bits are set or cleared
+class ADD < SalInstruction
+  def initialize(mem)
+    @opCode = "ADD"
+    @argType = "NONE"
+    @memoryArray = mem
+  end
+
+  def execute #FIXME: Adds as strings not ints
+    @memoryArray.registerA += @memoryArray.registerB
+    #FIXME: Does not set overflow bit
+    #FIXME: Does not set zeroresult bit
+  end
+end
+
 # TODO: HLT - Terminates program execution.
 
 # parseInstruction -
@@ -127,6 +141,8 @@ def parseInstruction(line, memory)
     return XCH.new(memory)
   when "JMP"
     return JMP.new(arg, memory)
+  when "ADD"
+    return ADD.new(memory)
   else
     return "Unknown instruction..."
   end

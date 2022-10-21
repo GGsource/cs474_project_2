@@ -1,0 +1,8 @@
+DEC X
+LDI 1
+STR X
+LDA X
+LDB X
+ADD
+JMP 5
+HLT

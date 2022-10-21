@@ -9,10 +9,10 @@ require_relative "instructions.rb"
 require_relative "Memory.rb"
 
 print "Please provide the file name for the file you'd like to work with: "
-input = gets[0...-1]
+inputFile = gets[0...-1]
 memory = Memory.new
-
-File.readlines("#{input}").each_with_index { |line, i| memory[i] = parseInstruction(line, memory); i += 1 until (i >= 127) }
+inputFile = if File.file?("tests/#{inputFile}") then "tests/#{inputFile}" end #checks if 'tests' dir exists to look for file, otherwise checks root directory
+File.readlines("#{inputFile}").each_with_index { |line, i| memory[i] = parseInstruction(line, memory); i += 1 until (i >= 127) }
 
 until false
   puts memory
