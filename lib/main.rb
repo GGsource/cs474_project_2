@@ -16,6 +16,7 @@ File.readlines("#{input}").each_with_index { |line, i| memory[i] = parseInstruct
 
 until false
   puts memory
+  puts "current symbol addresses: #{memory.symbolAddresses}" #DEBUGGING: prints variable map
   puts "s - Execute a single line of code, starting from the instruction at memory address 0; update the PC, the
     registers and memory according to the instruction; and print the value of the registers, the zero bit, the
     overflow bit, and only the memory locations that store source code or program data after the line is

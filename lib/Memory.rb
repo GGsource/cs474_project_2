@@ -1,10 +1,11 @@
 class Memory
-  attr_accessor :internalArray, :registerA, :registerB, :pc, :mc, :zeroResultBit, :overflowBit
+  attr_accessor :internalArray, :registerA, :registerB, :pc, :mc, :zeroResultBit, :overflowBit, :symbolAddresses
 
   def initialize
     @internalArray = Array.new(256)
     @registerA = @registerB = @pc = @zeroResultBit = @overflowBit = 0
     @mc = 128
+    @symbolAddresses = {}
   end
 
   def [](ndx)
@@ -31,7 +32,7 @@ class Memory
         isMemoryEmpty = false
       end
       if i != pc
-        returnString += "├   #{i}. #{contents}\n" unless contents == nil
+        returnString += "├   #{i}. #{contents}\n" unless contents.nil?
       else
         returnString += ">>  #{i}. #{contents}          <- pc is currently here\n"
       end
@@ -39,6 +40,12 @@ class Memory
     if isMemoryEmpty
       returnString += "└   Memory is currently empty.\n"
     end
+    returnString += "" "
+    registerA =     #{@registerA}
+    registerB =     #{@registerB}
+    zeroResultBit = #{@zeroResultBit} 
+    overflowBit =   #{@overflowBit}
+    " ""
     returnString += "\n"
   end
 end
