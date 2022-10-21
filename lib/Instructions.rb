@@ -29,8 +29,8 @@ end
 
 # DONE: LDX - LDA and LDB take given symbol value and store it in the register
 class LDX < SalInstruction
-  def initialize(reg, givenSymbol, mem)
-    @opCode = "LD#{reg}"
+  def initialize(instruction, givenSymbol, mem)
+    @opCode = instruction
     @argType = "STRING"
     @arg = givenSymbol
     @memoryArray = mem
@@ -88,11 +88,24 @@ class XCH < SalInstruction
   end
 end
 
-# TODO: JMP
-# TODO: JZS
-# TODO: JVS
-# TODO: ADD
-# TODO: HLT
+# TODO: JMP - Transfers control to instruction at address number in program memory.
+class JMP < SalInstruction
+  def initialize(address, mem)
+    @opCode = "JMP"
+    @argType = "NUMBER"
+    @memoryArray = mem
+    @arg = address
+  end
+
+  def execute
+    @memoryArray.pc = @arg #Sets program counter to the given address
+  end
+end
+
+# TODO: JZS - Transfers control to instruction at address number if the zero-result bit is set.
+# TODO: JVS - Transfers control to instruction at address number if the overflow bit is set.
+# TODO: ADD - Adds registers A and B. Sum is stored in A. The overflow and zero-result bits are set or cleared
+# TODO: HLT - Terminates program execution.
 
 # parseInstruction -
 # Function that reads in a line and parses it as an instruction
@@ -104,16 +117,16 @@ def parseInstruction(line, memory)
   case instruction
   when "DEC"
     return DEC.new(arg, memory)
-  when "LDA"
-    return LDX.new("A", arg, memory)
-  when "LDB"
-    return LDX.new("B", arg, memory)
+  when "LDA", "LDB"
+    return LDX.new(instruction, arg, memory)
   when "LDI"
     return LDI.new(arg, memory)
   when "STR"
     return STR.new(arg, memory)
   when "XCH"
     return XCH.new(memory)
+  when "JMP"
+    return JMP.new(arg, memory)
   else
     return "Unknown instruction..."
   end
