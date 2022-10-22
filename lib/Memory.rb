@@ -19,7 +19,7 @@ class Memory
   def executeSingle
     @internalArray[@pc].execute
     @curhc += 1
-    if (@prevhc + 1000 == @curhc)
+    if (@prevhc + 10000 == @curhc)
       @loopWarn = true
     end
   end
@@ -45,11 +45,11 @@ class Memory
       end
     end
     if @mc <= 128
-      returnString += "└Memory is currently empty.\n"
+      returnString += "└#{"Memory is currently empty.".center(50)}\n"
     end
-    returnString += "
-#{_title("Regs & Bits")}├registerA =     #{@registerA} ├zeroResultBit = #{@zeroResultBit}\n└registerB =     #{@registerB} └overflowBit =   #{@overflowBit}\n"
-    returnString += "\n"
+    returnString += _title("Bits & Regs")
+    returnString += "├#{"zeroResultBit =".ljust(16)}#{@zeroResultBit.to_s.rjust(7)}#{"".rjust(3)}├#{"registerA =".ljust(16)}#{@registerA.to_s.rjust(7)}\n"
+    returnString += "└#{"overflowBit =".ljust(16)}#{@overflowBit.to_s.rjust(7)}#{"".rjust(3)}└#{"registerB =".ljust(16)}#{@registerB.to_s.rjust(7)}\n"
     returnString += "#{_title("Symbol Table")} #{@symbolAddresses}" #DEBUGGING: prints symbol table as its filled
   end
 end

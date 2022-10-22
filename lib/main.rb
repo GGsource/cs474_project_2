@@ -34,9 +34,9 @@ until memory.reachedEnd?
     until memory.reachedEnd?
       memory.executeSingle
       if memory.loopWarn
-        print "#{memory.curhc} lines have been run so far, there might be an endless loop. Exit? y/n: "
+        print "#{memory.curhc} lines have been run so far, there might be an endless loop. Continue? y/n: "
         response = gets.rstrip
-        if response.downcase == "y" then break else memory.prevhc = memory.curhc; memory.loopWarn = false end
+        if response.downcase == "n" then break else memory.prevhc = memory.curhc; memory.loopWarn = false end
       end
     end
     puts memory
