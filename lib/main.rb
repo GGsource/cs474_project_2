@@ -7,14 +7,16 @@
 require_relative "instructions.rb"
 require_relative "Memory.rb"
 
+# Prompt user and get input
 print "Please provide the file name for the file you'd like to work with: "
 inputFile = gets.rstrip
-memory = Memory.new
 inputFile = if File.file?("tests/#{inputFile}") then "tests/#{inputFile}" end #checks if 'tests' dir exists to look for file, otherwise checks root directory
+memory = Memory.new #Create new memory
+# Read lines from file and populate memory
 File.readlines("#{inputFile}").each_with_index { |line, i| memory[i] = parseInstruction(line, memory); i += 1 until (i >= 127) }
 
-until memory.reachedEnd?
-  puts memory
+until memory.reachedEnd? #Main Loop
+  puts memory #print out our memory structure for user to see, then tell them the options & get command
   puts "s - Execute a single line of code, starting from the instruction at memory address 0; update the PC, the
     registers and memory according to the instruction; and print the value of the registers, the zero bit, the
     overflow bit, and only the memory locations that store source code or program data after the line is
@@ -25,12 +27,10 @@ until memory.reachedEnd?
   print "\nPlease input your command: "
   cmd = gets.rstrip
 
-  case cmd
-  when "s"
-    # DONE: Implement command s
+  case cmd #Execute user's command
+  when "s" #Executes only 1 line
     memory.executeSingle
-  when "a"
-    # DONE: Implement command a
+  when "a" #Executes all lines or checks if user wishes to continue every 10k instructions
     until memory.reachedEnd?
       memory.executeSingle
       if memory.loopWarn
@@ -39,13 +39,14 @@ until memory.reachedEnd?
         if response.downcase == "n" then break else memory.prevhc = memory.curhc; memory.loopWarn = false end
       end
     end
-    puts memory
+    puts memory #print the memory at the end of running whole SAL file
     break
-  when "q"
+  when "q" #quits program
     break
-  else
+  else #unrecognized command
     puts "Invalid command! Please try again."
   end
 end
+#Program is ending, say goodbye to user
 if (memory.pc > 127) then print "Reached end of source file, " elsif memory.pc < 0 then print "Halt command was encountered, " end
 puts "Exiting Project 2, goodbye!"
