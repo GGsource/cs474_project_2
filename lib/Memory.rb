@@ -29,7 +29,6 @@ class Memory
   end
 
   def to_s
-    isMemoryEmpty = true
     returnString = _title("instructions")
     @internalArray.each_with_index do |contents, i|
       if i == 128
