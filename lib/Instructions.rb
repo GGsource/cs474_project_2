@@ -154,18 +154,18 @@ class ADD < SalInstruction
   end
 
   def execute
-    @memoryArray.registerA += @memoryArray.registerB #sum the values together into A
+    # Set overflow bit
+    if @memoryArray.registerA + @memoryArray.registerB > (2 ** 31) - 1 || @memoryArray.registerA + @memoryArray.registerB < -(2 ** 31)
+      @memoryArray.overflowBit = 1
+    else
+      @memoryArray.overflowBit = 0
+      @memoryArray.registerA += @memoryArray.registerB #sum the values together into A, knowing they don't overflow
+    end
     # Set Zero Result bit
     if @memoryArray.registerA == 0 #Check if the resulting sum was 0
       @memoryArray.zeroResultBit = 1 #If it was, then set zeroResultBit to 1
     else #Otherwise, set it to 0
       @memoryArray.zeroResultBit = 0
-    end
-    # Set overflow bit
-    if @memoryArray.registerA > (2 ** 31) - 1 || @memoryArray.registerA < -(2 ** 31)
-      @memoryArray.overflowBit = 1
-    else
-      @memoryArray.overflowBit = 0
     end
     @memoryArray.pc += 1 #Progress the counter forward
   end
