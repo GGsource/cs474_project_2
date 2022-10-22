@@ -1,3 +1,4 @@
+# SAlInstruction - Abstract class all other instructions extend from. Contains shared information & how to print them
 class SalInstruction
   attr_accessor :opCode, :argType, :arg, :memoryArray
 
