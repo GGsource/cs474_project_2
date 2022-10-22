@@ -127,7 +127,7 @@ end
 
 #IDEA: Combine these two classes into 1 ^v^v^v
 
-# TESTME: JVS - Transfers control to instruction at address number if the overflow bit is set.
+# DONE: JVS - Transfers control to instruction at address number if the overflow bit is set.
 class JVS < SalInstruction
   def initialize(address, mem)
     @opCode = "JVS"
@@ -154,7 +154,6 @@ class ADD < SalInstruction
   end
 
   def execute
-    oldA = @memoryArray.registerA #Save original value in A for checking overflow
     @memoryArray.registerA += @memoryArray.registerB #sum the values together into A
     # Set Zero Result bit
     if @memoryArray.registerA == 0 #Check if the resulting sum was 0
@@ -163,11 +162,7 @@ class ADD < SalInstruction
       @memoryArray.zeroResultBit = 0
     end
     # Set overflow bit
-    if oldA.positive? && @memoryArray.registerB.positive? && @memoryArray.registerA.negative?
-      # Two positive numbers summed to a negative. This is overflow
-      @memoryArray.overflowBit = 1
-    elsif oldA.negative? && @memoryArray.registerB.negative? && @memoryArray.registerA.positive?
-      #Two negative numbers summed to a positive. This is overflow
+    if @memoryArray.registerA > (2 ** 31) - 1 || @memoryArray.registerA < -(2 ** 31)
       @memoryArray.overflowBit = 1
     else
       @memoryArray.overflowBit = 0
@@ -176,7 +171,18 @@ class ADD < SalInstruction
   end
 end
 
-# TODO: HLT - Terminates program execution.
+# DONE: HLT - Terminates program execution.
+class HLT < SalInstruction
+  def initialize(mem)
+    @opCode = "HLT"
+    @argType = "NONE"
+    @memoryArray = mem
+  end
+
+  def execute
+    @memoryArray.pc = -1 #Set to negative 1 to distinguish it from running out of source code space
+  end
+end
 
 # parseInstruction -
 # Function that reads in a line and parses it as an instruction
@@ -204,6 +210,8 @@ def parseInstruction(line, memory)
     return JVS.new(arg, memory)
   when "ADD"
     return ADD.new(memory)
+  when "HLT"
+    return HLT.new(memory)
   else
     return "Unknown instruction..."
   end

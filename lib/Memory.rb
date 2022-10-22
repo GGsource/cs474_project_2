@@ -18,33 +18,43 @@ class Memory
 
   def executeSingle
     @internalArray[@pc].execute
-    # FIXME: Make sourcecode check stop at 127
-    # FIXME: Make memory check stop at 255
+  end
+
+  def reachedEnd?
+    if pc >= 128 || pc < 0
+      true
+    else
+      false
+    end
   end
 
   def to_s
     isMemoryEmpty = true
-    returnString = "┌--------------<Instructions>--------------\n"
+    returnString = _title("instructions")
     @internalArray.each_with_index do |contents, i|
       if i == 128
-        returnString += "┌--------------<Memory>--------------\n"
+        returnString += _title("Memory")
       end
       if i > 127 && contents != nil
         isMemoryEmpty = false
       end
       if i != pc
-        returnString += "├   #{i}. #{contents}\n" unless contents.nil?
+        returnString += "#{"├   #{i}. #{contents}".ljust(52)}\n" unless contents.nil?
       else
-        returnString += ">>  #{i}. #{contents}          <- pc is currently here\n"
+        returnString += "#{">>  #{i}. #{contents}".ljust(52)}<- pc is currently here\n"
       end
     end
     if isMemoryEmpty
       returnString += "└   Memory is currently empty.\n"
     end
-    returnString += "" "┌--------------<Regs&Bits>--------------
+    returnString += "
+#{_title("Regs & Bits")}
 ├   registerA =     #{@registerA} ├   zeroResultBit = #{@zeroResultBit}
-└   registerB =     #{@registerB} ├   overflowBit =   #{@overflowBit}
-    " ""
+└   registerB =     #{@registerB} ├   overflowBit =   #{@overflowBit}"
     returnString += "\n"
   end
+end
+
+def _title(title)
+  "┌#{title.center(50, "-")}┐\n"
 end
