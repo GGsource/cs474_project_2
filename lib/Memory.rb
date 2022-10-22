@@ -1,9 +1,9 @@
 class Memory
-  attr_accessor :internalArray, :registerA, :registerB, :pc, :mc, :zeroResultBit, :overflowBit, :symbolAddresses
+  attr_accessor :internalArray, :registerA, :registerB, :pc, :mc, :zeroResultBit, :overflowBit, :symbolAddresses, :prevhc, :curhc, :loopWarn
 
   def initialize
     @internalArray = Array.new(256, 0)
-    @registerA = @registerB = @pc = @zeroResultBit = @overflowBit = 0
+    @registerA = @registerB = @pc = @zeroResultBit = @overflowBit = @prevhc = @curhc = 0
     @mc = 128
     @symbolAddresses = {}
   end
@@ -18,6 +18,10 @@ class Memory
 
   def executeSingle
     @internalArray[@pc].execute
+    @curhc += 1
+    if (@prevhc + 1000 == @curhc)
+      @loopWarn = true
+    end
   end
 
   def reachedEnd?

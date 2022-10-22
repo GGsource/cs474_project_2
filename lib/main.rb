@@ -8,7 +8,7 @@ require_relative "instructions.rb"
 require_relative "Memory.rb"
 
 print "Please provide the file name for the file you'd like to work with: "
-inputFile = gets[0...-1]
+inputFile = gets.rstrip
 memory = Memory.new
 inputFile = if File.file?("tests/#{inputFile}") then "tests/#{inputFile}" end #checks if 'tests' dir exists to look for file, otherwise checks root directory
 File.readlines("#{inputFile}").each_with_index { |line, i| memory[i] = parseInstruction(line, memory); i += 1 until (i >= 127) }
@@ -31,8 +31,16 @@ until memory.reachedEnd?
     memory.executeSingle
   when "a"
     # DONE: Implement command a
-    memory.executeSingle until memory.reachedEnd?
+    until memory.reachedEnd?
+      memory.executeSingle
+      if memory.loopWarn
+        print "#{memory.curhc} lines have been run so far, there might be an endless loop. Exit? y/n: "
+        response = gets.rstrip
+        if response.downcase == "y" then break else memory.prevhc = memory.curhc; memory.loopWarn = false end
+      end
+    end
     puts memory
+    break
   when "q"
     break
   else
