@@ -2,7 +2,7 @@ class Memory
   attr_accessor :internalArray, :registerA, :registerB, :pc, :mc, :zeroResultBit, :overflowBit, :symbolAddresses
 
   def initialize
-    @internalArray = Array.new(256)
+    @internalArray = Array.new(256, 0)
     @registerA = @registerB = @pc = @zeroResultBit = @overflowBit = 0
     @mc = 128
     @symbolAddresses = {}
@@ -35,20 +35,17 @@ class Memory
       if i == 128
         returnString += _title("Memory")
       end
-      if i > 127 && contents != nil
-        isMemoryEmpty = false
-      end
       if i != pc
-        returnString += "#{"├   #{i}. #{contents}".ljust(52)}\n" unless contents.nil?
+        returnString += "#{"├   #{i}. #{contents}".ljust(52)}\n" unless (i >= @mc) || (i < 128 && contents == 0)
       else
         returnString += "#{"├>  #{i}. #{contents}".ljust(52)}<- pc is currently here\n"
       end
     end
-    if isMemoryEmpty
+    if @mc <= 128
       returnString += "└Memory is currently empty.\n"
     end
     returnString += "
-#{_title("Regs & Bits")}├registerA =     #{@registerA} ├zeroResultBit = #{@zeroResultBit}\n└registerB =     #{@registerB} └overflowBit =   #{@overflowBit}"
+#{_title("Regs & Bits")}├registerA =     #{@registerA} ├zeroResultBit = #{@zeroResultBit}\n└registerB =     #{@registerB} └overflowBit =   #{@overflowBit}\n"
     returnString += "\n"
     returnString += "#{_title("Symbol Table")} #{@symbolAddresses}" #DEBUGGING: prints symbol table as its filled
   end
