@@ -107,37 +107,17 @@ class JMP < SalInstruction
   end
 end
 
-# DONE: JZS - Transfers control to instruction at address number if the zero-result bit is set.
-class JZS < SalInstruction
-  def initialize(address, mem)
-    @opCode = "JZS"
+# DONE: JXS - JZS & JVS Transfer control to instruction at address number if the zero-result bit or overlfow bit is set respectively.
+class JXS < SalInstruction
+  def initialize(address, instruction, mem)
+    @opCode = instruction
     @argType = "NUMBER"
     @memoryArray = mem
     @arg = address.to_i
   end
 
   def execute
-    if @memoryArray.zeroResultBit == 1
-      @memoryArray.pc = @arg
-    else
-      @memoryArray.pc += 1
-    end
-  end
-end
-
-#IDEA: Combine these two classes into 1 ^v^v^v
-
-# DONE: JVS - Transfers control to instruction at address number if the overflow bit is set.
-class JVS < SalInstruction
-  def initialize(address, mem)
-    @opCode = "JVS"
-    @argType = "NUMBER"
-    @memoryArray = mem
-    @arg = address.to_i
-  end
-
-  def execute
-    if @memoryArray.overflowBit == 1
+    if (@opCode == "JZS" && @memoryArray.zeroResultBit == 1) || (@opCode == "JVS" && @memoryArray.overflowBit == 1)
       @memoryArray.pc = @arg
     else
       @memoryArray.pc += 1
@@ -204,10 +184,8 @@ def parseInstruction(line, memory)
     return XCH.new(memory)
   when "JMP"
     return JMP.new(arg, memory)
-  when "JZS"
-    return JZS.new(arg, memory)
-  when "JVS"
-    return JVS.new(arg, memory)
+  when "JZS", "JVS"
+    return JXS.new(arg, instruction, memory)
   when "ADD"
     return ADD.new(memory)
   when "HLT"
