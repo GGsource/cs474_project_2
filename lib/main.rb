@@ -15,7 +15,6 @@ File.readlines("#{inputFile}").each_with_index { |line, i| memory[i] = parseInst
 
 until memory.reachedEnd?
   puts memory
-  # puts "current symbol table: #{memory.symbolAddresses}" #DEBUGGING: prints symbol table as its filled
   puts "s - Execute a single line of code, starting from the instruction at memory address 0; update the PC, the
     registers and memory according to the instruction; and print the value of the registers, the zero bit, the
     overflow bit, and only the memory locations that store source code or program data after the line is

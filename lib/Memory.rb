@@ -41,17 +41,16 @@ class Memory
       if i != pc
         returnString += "#{"├   #{i}. #{contents}".ljust(52)}\n" unless contents.nil?
       else
-        returnString += "#{">>  #{i}. #{contents}".ljust(52)}<- pc is currently here\n"
+        returnString += "#{"├>  #{i}. #{contents}".ljust(52)}<- pc is currently here\n"
       end
     end
     if isMemoryEmpty
-      returnString += "└   Memory is currently empty.\n"
+      returnString += "└Memory is currently empty.\n"
     end
     returnString += "
-#{_title("Regs & Bits")}
-├   registerA =     #{@registerA} ├   zeroResultBit = #{@zeroResultBit}
-└   registerB =     #{@registerB} ├   overflowBit =   #{@overflowBit}"
+#{_title("Regs & Bits")}├registerA =     #{@registerA} ├zeroResultBit = #{@zeroResultBit}\n└registerB =     #{@registerB} └overflowBit =   #{@overflowBit}"
     returnString += "\n"
+    returnString += "#{_title("Symbol Table")} #{@symbolAddresses}" #DEBUGGING: prints symbol table as its filled
   end
 end
 
