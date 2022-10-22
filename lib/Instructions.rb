@@ -24,6 +24,7 @@ class DEC < SalInstruction
   def execute
     @memoryArray[@memoryArray.mc] = nil
     @memoryArray.symbolAddresses[@symbol] = @memoryArray.mc
+    @memoryArray.mc += 1; @memoryArray.pc += 1
   end
 end
 
@@ -42,6 +43,7 @@ class LDX < SalInstruction
     else
       @memoryArray.registerB = @memoryArray[@memoryArray.symbolAddresses[@arg]]
     end
+    @memoryArray.pc += 1
   end
 end
 
@@ -56,6 +58,7 @@ class LDI < SalInstruction
 
   def execute
     @memoryArray.registerA = @arg
+    @memoryArray.pc += 1
   end
 end
 
@@ -70,6 +73,7 @@ class STR < SalInstruction
 
   def execute
     @memoryArray[@memoryArray.symbolAddresses[@arg]] = @memoryArray.registerA
+    @memoryArray.pc += 1
   end
 end
 
@@ -85,6 +89,7 @@ class XCH < SalInstruction
     temp = @memoryArray.registerA
     @memoryArray.registerA = @memoryArray.registerB
     @memoryArray.registerB = temp
+    @memoryArray.pc += 1
   end
 end
 
@@ -97,13 +102,49 @@ class JMP < SalInstruction
     @arg = address.to_i
   end
 
-  def execute #TESTME: Check if this does as its supposed to
-    @memoryArray.pc = @arg - 1 #Sets program counter to the given address. - 1 b/c pc is about to increment
+  def execute
+    @memoryArray.pc = @arg #Sets program counter to the given address
   end
 end
 
-# TODO: JZS - Transfers control to instruction at address number if the zero-result bit is set.
-# TODO: JVS - Transfers control to instruction at address number if the overflow bit is set.
+# DONE: JZS - Transfers control to instruction at address number if the zero-result bit is set.
+class JZS < SalInstruction
+  def initialize(address, mem)
+    @opCode = "JZS"
+    @argType = "NUMBER"
+    @memoryArray = mem
+    @arg = address.to_i
+  end
+
+  def execute
+    if @memoryArray.zeroResultBit == 1
+      @memoryArray.pc = @arg
+    else
+      @memoryArray.pc += 1
+    end
+  end
+end
+
+#IDEA: Combine these two classes into 1 ^v^v^v
+
+# TESTME: JVS - Transfers control to instruction at address number if the overflow bit is set.
+class JVS < SalInstruction
+  def initialize(address, mem)
+    @opCode = "JVS"
+    @argType = "NUMBER"
+    @memoryArray = mem
+    @arg = address.to_i
+  end
+
+  def execute
+    if @memoryArray.overflowBit == 1
+      @memoryArray.pc = @arg
+    else
+      @memoryArray.pc += 1
+    end
+  end
+end
+
 # DONE: ADD - Adds registers A and B. Sum is stored in A. The overflow and zero-result bits are set or cleared
 class ADD < SalInstruction
   def initialize(mem)
@@ -112,10 +153,26 @@ class ADD < SalInstruction
     @memoryArray = mem
   end
 
-  def execute #FIXME: Adds as strings not ints
-    @memoryArray.registerA += @memoryArray.registerB
-    #FIXME: Does not set overflow bit
-    #FIXME: Does not set zeroresult bit
+  def execute
+    oldA = @memoryArray.registerA #Save original value in A for checking overflow
+    @memoryArray.registerA += @memoryArray.registerB #sum the values together into A
+    # Set Zero Result bit
+    if @memoryArray.registerA == 0 #Check if the resulting sum was 0
+      @memoryArray.zeroResultBit = 1 #If it was, then set zeroResultBit to 1
+    else #Otherwise, set it to 0
+      @memoryArray.zeroResultBit = 0
+    end
+    # Set overflow bit
+    if oldA.positive? && @memoryArray.registerB.positive? && @memoryArray.registerA.negative?
+      # Two positive numbers summed to a negative. This is overflow
+      @memoryArray.overflowBit = 1
+    elsif oldA.negative? && @memoryArray.registerB.negative? && @memoryArray.registerA.positive?
+      #Two negative numbers summed to a positive. This is overflow
+      @memoryArray.overflowBit = 1
+    else
+      @memoryArray.overflowBit = 0
+    end
+    @memoryArray.pc += 1 #Progress the counter forward
   end
 end
 
@@ -141,6 +198,10 @@ def parseInstruction(line, memory)
     return XCH.new(memory)
   when "JMP"
     return JMP.new(arg, memory)
+  when "JZS"
+    return JZS.new(arg, memory)
+  when "JVS"
+    return JVS.new(arg, memory)
   when "ADD"
     return ADD.new(memory)
   else

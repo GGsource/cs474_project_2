@@ -18,7 +18,6 @@ class Memory
 
   def executeSingle
     @internalArray[@pc].execute
-    @mc += 1; @pc += 1
     # FIXME: Make sourcecode check stop at 127
     # FIXME: Make memory check stop at 255
   end
